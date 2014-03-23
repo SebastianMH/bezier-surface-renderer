@@ -5,6 +5,7 @@
 class Point{
 	public:
 	float x,y,z;
+	Point();
 	Point(float, float, float);
 };
 
@@ -12,6 +13,7 @@ class Point{
 class Curve{
 	public:
 	Point a,b,c,d;
+	Curve();
 	Curve(Point, Point, Point, Point);
 	void interpolate(float);
 };

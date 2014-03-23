@@ -5,8 +5,8 @@
 using namespace std;
 
 
-#include "CImg.h"  //to get rgba data
-using namespace cimg_library;
+//#include "CImg.h"  //to get rgba data
+//using namespace cimg_library;
 
 
 #include <vector>
@@ -59,7 +59,7 @@ class Viewport {
 
 float rand_float(float a, float b)
 {
-return ((b-a)*((float)rand()/RAND_MAX))+a;
+    return ((b-a)*((float)rand()/RAND_MAX))+a;
 }
 
 /*
@@ -89,20 +89,27 @@ float getB(float x, float y){
 
 class SquareLens {
   public:
-    float s = rand_float(0.01f,0.04f); //side length/2
-    float temp_theta = rand_float(0,(float)2*PI);
-	float temp_mag = rand_float(0,(float)2*PI);
-	float x = temp_mag*cos(temp_theta);
-    float y = temp_mag*sin(temp_theta);
-    float vx = rand_float(-0.004f,0.004f);
-    float vy = rand_float(-0.004f,0.004f);
-	float r = 0.5f;
-	float g = 0.5f;
-	float b = 0.5f;
+    float s, temp_theta, temp_mag;
+    float x, y, vx, vy;
+    float r, g, b;
     
+    SquareLens();
     void draw();
     void move(SquareLens squarelens[]);
 };
+
+SquareLens::SquareLens(){
+    s = rand_float(0.01f,0.04f); //side length/2
+    temp_theta = rand_float(0,(float)2*PI);
+	temp_mag = rand_float(0,(float)2*PI);
+	x = temp_mag*cos(temp_theta);
+    y = temp_mag*sin(temp_theta);
+    vx = rand_float(-0.004f,0.004f);
+    vy = rand_float(-0.004f,0.004f);
+	r = 0.5f;
+	g = 0.5f;
+	b = 0.5f;
+}
 
 void SquareLens::draw () {
     glColor3f(r,g,b);                   // setting the color to pure red 90% for the rect
@@ -283,8 +290,66 @@ void myFrameMove() {
 int main(int argc, char *argv[]) {
     
     
-    srand(5);
-    
+    cout << argv[1];
+    cout << argv[2];
+    /*
+        int i = 1;
+    float r, g, b;
+    float x, y, z;
+    while(i < argc) {
+        if(strcmp(argv[i],"-ka") == 0) {
+            r = atof(argv[i+1]);
+            g = atof(argv[i+2]);
+            b = atof(argv[i+3]);
+            ambient = RGB(r, g, b);
+            ambient_valid = true;
+            i += 4;
+        } else if (strcmp(argv[i],"-kd") == 0) {
+            r = atof(argv[i+1]);
+            g = atof(argv[i+2]);
+            b = atof(argv[i+3]);
+            diffuse = RGB(r, g, b);
+            diffuse_valid = true;
+            i += 4;
+        } else if (strcmp(argv[i],"-ks") == 0) {
+            r = atof(argv[i+1]);
+            g = atof(argv[i+2]);
+            b = atof(argv[i+3]);
+            specular = RGB(r, g, b);
+            specular_valid = true;
+            i += 4;
+        } else if (strcmp(argv[i],"-sp") == 0) {
+            power_coeff = atof(argv[i+1]);
+            i += 2;
+        } else if (strcmp(argv[i],"-pl") == 0) {
+            x = atof(argv[i+1]);
+            y = atof(argv[i+2]);
+            z = atof(argv[i+3]);
+            r = atof(argv[i+4]);
+            g = atof(argv[i+5]);
+            b = atof(argv[i+6]);
+            point_lights[num_point_lights] = Light(x, y, z, r, g, b);
+            num_point_lights++;
+            i += 7;
+        } else if (strcmp(argv[i],"-dl") == 0) {
+            x = atof(argv[i+1]);
+            y = atof(argv[i+2]);
+            z = atof(argv[i+3]);
+            r = atof(argv[i+4]);
+            g = atof(argv[i+5]);
+            b = atof(argv[i+6]);
+            direct_lights[num_direct_lights] = Light(x, y, z, r, g, b);
+            num_direct_lights++;
+            i += 7;
+        } else if (strcmp(argv[i],"-toon") == 0) {
+                toon = true;
+                i += 1;
+        } else {
+            printf("Invalid command line flags");
+            exit(0);
+        }
+    }
+    */
     
   //This initializes glut
   glutInit(&argc, argv);

@@ -1,5 +1,6 @@
 #include "bezier.h"
 
+Point::Point(){ }
 
 Point::Point(float xx, float yy, float zz){
 	x = xx;
@@ -7,6 +8,7 @@ Point::Point(float xx, float yy, float zz){
 	z = zz;
 }
 
+Curve::Curve() { }
 
 Curve::Curve(Point aa, Point bb, Point cc, Point dd){
 	a = aa;
