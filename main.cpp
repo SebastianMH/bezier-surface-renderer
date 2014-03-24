@@ -30,22 +30,46 @@ using namespace cimg_library;
 
 #include <time.h>
 #include <math.h>
-
-
-
-
-
-
+#include <vector>
 
 #ifdef _WIN32
 static DWORD lastTime;
 #else
 static struct timeval lastTime;
 #endif
-
+using namespace std;
 #define PI 3.14159265
 #define Nsquares 512
-using namespace std;
+
+
+
+
+
+
+
+//load structure of models->patchs->curves->vertex
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //****************************************************
 // Some Classes
