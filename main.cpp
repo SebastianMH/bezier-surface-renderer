@@ -1,8 +1,6 @@
 // CS184 Simple OpenGL Example
 #include <cstdlib>  //for rand
 
-#include <iostream>  //to load images
-using namespace std;
 
 //#include "CImg.h"  //to get rgba data
 //using namespace cimg_library;
@@ -12,6 +10,8 @@ using namespace std;
 #include <fstream>
 #include <cmath>
 #include <string>
+#include <stdlib.h>
+#include <sstream>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -30,6 +30,8 @@ using namespace std;
 #include <time.h>
 #include <math.h>
 
+#include "bezier.h"
+
 #ifdef _WIN32
 static DWORD lastTime;
 #else
@@ -39,30 +41,83 @@ static struct timeval lastTime;
 #define PI 3.14159265
 using namespace std;
 
-
-//****************************************************
-// Some Classes
-//****************************************************
-
-/*************** OLD CODE *********************************/
-
-class Viewport {
-  public:
-    int w, h; // width and height
-};
-
-
-
 //****************************************************
 // Global Variables
 //****************************************************
-Viewport    viewport;
-
 
 string input_file_name;
 float sub_div_parameter;
 // switch from uniform to adaptive mode 
 bool adaptive = false;
+
+
+//****************************************************
+// Some Classes
+//****************************************************
+
+class Viewport {
+  public:
+    int w, h; // width and height
+};
+Viewport viewport;
+
+
+//****************************************************
+// Some Functions
+//****************************************************
+
+void parseCommandlineArguments(int argc, char *argv[]) {
+  if(argc < 3) {
+    printf("\nWrong number of command-line arguments. Arguments should be in the format:\n");
+    printf("main [inputfile.bez] [float subdivision parameter] optional[-a]\n\n");
+    exit(0);
+  }
+  input_file_name = argv[1];
+  sub_div_parameter = atof(argv[2]);
+  
+  if(argc == 4 && strcmp(argv[3],"-a")) {
+    adaptive = true;
+  }
+}
+
+
+vector<string> splitAtWhiteSpace(string const &input) { 
+    istringstream buffer(input);
+    vector<string> ret((istream_iterator<string>(buffer)), istream_iterator<string>());
+    return ret;
+}
+
+void parseInputFile() {
+  ifstream input_file("models/" + input_file_name);
+  string line;
+  if(input_file.is_open()) {
+    int numPatches = 0;
+    getline(input_file, line);
+    numPatches = atoi(line.c_str());
+    
+    for (int i = 0; i < numPatches; i++){
+        float point_array[4][4];
+        for(int c = 0; c < 4; c++) {
+            getline(input_file, line);
+            vector<string> coor_list;
+            coor_list = splitAtWhiteSpace(line);
+            for(int p = 0; p < 4; p++) {
+                float x = atof(coor_list[p + 3*c].c_str());
+                float y = atof(coor_list[p + 3*c].c_str());
+                float z = atof(coor_list[p + 3*c].c_str());
+                Point point(x, y, z);
+                cout << x << " " << y << " " << z << "\n";
+            }
+            //float curve[4] = {atof(coor_list[0].c_str()), atof(coor_list[1]), atof(coor_list[2]), atof(coor_list[3])};
+            //point_array[c] = curve; 
+        }
+        //blank line
+        getline(input_file, line);
+    }
+    input_file.close();
+  }
+  
+}
 
 
 //****************************************************
@@ -207,18 +262,9 @@ void myFrameMove() {
 //****************************************************
 int main(int argc, char *argv[]) {
     
-  if(argc < 3) {
-    printf("\nWrong number of command-line arguments. Arguments should be in the format:\n");
-    printf("main [inputfile.bez] [float subdivision parameter] optional[-a]\n\n");
-    exit(0);
-  }
+  parseCommandlineArguments(argc, argv);
   
-  input_file_name = argv[1];
-  sub_div_parameter = atof(argv[2]);
-  
-  if(argc == 4 && strcmp(argv[3],"-a")) {
-    adaptive = true;
-  }
+  parseInputFile();
   
   //This initializes glut
   glutInit(&argc, argv);
