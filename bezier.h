@@ -2,6 +2,13 @@
 #define BEZIER_H
 
 
+class Color{
+	public:
+	float r, g, b;
+	Color(float, float, float);
+};
+
+
 class Point{
 	public:
 	float x,y,z;
@@ -10,12 +17,27 @@ class Point{
 };
 
 
+class Vector{
+	public:
+	float x,y,z;
+	Vector(float, float, float);
+};
+
+
+class Ray{
+	public:
+	Point point;
+	Vector vector;
+	Ray(Point, Vector);
+};
+
+/*
 class Curve{
 	public:
 	Point a,b,c,d;
 	Curve();
 	Curve(Point, Point, Point, Point);
-	void interpolate(float);
+	Ray interpolate(float);
 };
 
 
@@ -25,6 +47,16 @@ class Patch{
 	Patch(Curve, Curve, Curve, Curve);
 	void interpolate(float, float);
 	void subDivide(float);
+	void draw();
+};
+*/
+
+class Model{
+	public:
+	vector<Point[][]> patches;
+	Color color;
+	Model(vector<[][]>, Color);
+	void draw();
 };
 
 

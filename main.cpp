@@ -30,16 +30,16 @@
 #include <time.h>
 #include <math.h>
 
-#include "bezier.h"
+
 
 #ifdef _WIN32
 static DWORD lastTime;
 #else
 static struct timeval lastTime;
 #endif
-
-#define PI 3.14159265
 using namespace std;
+#define PI 3.14159265
+//load structure of models->patchs->curves->vertex
 
 //****************************************************
 // Global Variables
