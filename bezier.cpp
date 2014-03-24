@@ -1,5 +1,6 @@
 #include "bezier.h"
 
+Point::Point(){ }
 
 Color::Color(float rr, float gg, float bb){
 	r = rr;
@@ -14,6 +15,7 @@ Point::Point(float xx, float yy, float zz){
 	z = zz;
 }
 
+Curve::Curve() { }
 
 Vector::Vector(float xx, float yy, float zz){
 	x = xx;
