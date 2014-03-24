@@ -9,7 +9,7 @@ else
 	CFLAGS = -g -DGL_GLEXT_PROTOTYPES -Iexample_00/glut-3.7.6-bin -w -fmax-errors=4
 	LDFLAGS = -lglut -lGL
 endif
-	
+
 RM = /bin/rm -f 
 
 all: main 

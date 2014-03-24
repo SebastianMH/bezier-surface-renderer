@@ -30,6 +30,7 @@
 #include <time.h>
 #include <math.h>
 
+#include "bezier.h"
 
 
 #ifdef _WIN32
