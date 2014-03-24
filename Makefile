@@ -14,14 +14,17 @@ RM = /bin/rm -f
 
 all: main 
 
-main: main.o bezier.o
-	$(CC) $(CFLAGS) -o main main.o bezier.o $(LDFLAGS) 
+main: main.o bezier.o utility.o
+	$(CC) $(CFLAGS) -o main main.o bezier.o utility.o $(LDFLAGS) 
 
 main.o: main.cpp
 	$(CC) $(CFLAGS) -c main.cpp -o main.o
 
 bezier.o: bezier.cpp
 	$(CC) $(CFLAGS) -c bezier.cpp
+	
+utility.o: utility.cpp
+	$(CC) $(CFLAGS) -c utility.cpp
 
 clean: 
 	$(RM) *.o main

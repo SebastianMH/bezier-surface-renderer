@@ -1,33 +1,6 @@
 #include "bezier.h"
 
-Point::Point(){ }
 
-Color::Color(float rr, float gg, float bb){
-	r = rr;
-	g = gg;
-	b = bb;
-}
-
-
-Point::Point(float xx, float yy, float zz){
-	x = xx;
-	y = yy;
-	z = zz;
-}
-
-Curve::Curve() { }
-
-Vector::Vector(float xx, float yy, float zz){
-	x = xx;
-	y = yy;
-	z = zz;
-}
-
-
-Ray::Ray(Point p, Vector v){
-	point = p;
-	vector = v;
-}
 
 
 /*
@@ -37,8 +10,6 @@ Curve::Curve(Point aa, Point bb, Point cc, Point dd){
 	c = cc;
 	d = dd;
 }
-
-
 Ray Curve::interpolate(float u){
 	// first, split each of the three segments
 	// to form two new ones AB and BC
@@ -56,14 +27,15 @@ Ray Curve::interpolate(float u){
 	
 	return Ray(p, dPdu);
 }
-
-
-Patch::Patch(Curve aa, Curve bb, Curve cc, Curve dd){
-	a = aa;
-	b = bb;
-	c = cc;
-	d = dd;
+*/
+Patch::Patch(Point p[4][4]){
+	for (int i=0;i<4;i++){
+		for (int j=0;j<4;j++){
+			points[i][j] = p[i][j];
+		}
+	}
 }
+/*
 void interpolate(float u, float v){
 	// build control points for a Bezier curve in v
 	vcurve.a = a.bezcurveinterp(patch[0][0:3], u).point;
@@ -83,17 +55,12 @@ void interpolate(float u, float v){
 	n = cross(dPdu, dPdv)
 	n = n / length(n)
 return Ray(p, n);
-
-
-
-
-
 }
 void Patch::subDivide(float step){}
 */
 
 
-Model::Model(vector<Point[][]> p, Color c){
+Model::Model(vector<Patch> p, Color c){
 	patches = p;
 	color = c;
 };
