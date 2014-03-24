@@ -32,6 +32,8 @@
 #include <time.h>
 #include <math.h>
 
+#include "bezier.h"
+#include "utility.h"
 
 #ifdef _WIN32
 static DWORD lastTime;
