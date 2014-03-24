@@ -10,8 +10,10 @@
 #include <fstream>
 #include <cmath>
 #include <string>
+#include <cstring>
 #include <stdlib.h>
 #include <sstream>
+#include <iterator>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -29,7 +31,7 @@
 
 #include <time.h>
 #include <math.h>
-
+#include "utility.h"
 
 
 #ifdef _WIN32
@@ -87,6 +89,10 @@ vector<string> splitAtWhiteSpace(string const &input) {
     return ret;
 }
 
+
+
+void parseInputFile() {}
+/* wants a char array   const char*
 void parseInputFile() {
   ifstream input_file("models/" + input_file_name);
   string line;
@@ -118,7 +124,7 @@ void parseInputFile() {
   }
   
 }
-
+*/
 
 //****************************************************
 // keyboard functions
