@@ -91,41 +91,42 @@ vector<string> splitAtWhiteSpace(string const &input) {
 }
 
 
-
-void parseInputFile() {}
-/* wants a char array   const char*
-void parseInputFile() {
-  ifstream input_file("models/" + input_file_name);
+Model parseInputFile() {
+  ifstream input_file(input_file_name);
   string line;
   if(input_file.is_open()) {
     int numPatches = 0;
     getline(input_file, line);
     numPatches = atoi(line.c_str());
-    
+    vector<Patch> patches;
     for (int i = 0; i < numPatches; i++){
-        float point_array[4][4];
+        Point point_array[4][4];
         for(int c = 0; c < 4; c++) {
             getline(input_file, line);
             vector<string> coor_list;
             coor_list = splitAtWhiteSpace(line);
+            
             for(int p = 0; p < 4; p++) {
-                float x = atof(coor_list[p + 3*c].c_str());
-                float y = atof(coor_list[p + 3*c].c_str());
-                float z = atof(coor_list[p + 3*c].c_str());
+                float x = atof(coor_list[3*p].c_str());
+                float y = atof(coor_list[3*p+1].c_str());
+                float z = atof(coor_list[3*p+2].c_str());
                 Point point(x, y, z);
-                cout << x << " " << y << " " << z << "\n";
+                point_array[c][p] = point;
             }
-            //float curve[4] = {atof(coor_list[0].c_str()), atof(coor_list[1]), atof(coor_list[2]), atof(coor_list[3])};
-            //point_array[c] = curve; 
         }
-        //blank line
-        getline(input_file, line);
+        Patch patch(point_array);
+        patches.push_back(patch);
+        
+        getline(input_file, line); //blank line between patches
     }
     input_file.close();
+    Model model(patches, Color(0, 1, 0));
+    return model;
   }
-  
+  printf("input file was not found\n");
+  exit(1);
 }
-*/
+
 
 //****************************************************
 // keyboard functions
@@ -271,7 +272,7 @@ int main(int argc, char *argv[]) {
     
   parseCommandlineArguments(argc, argv);
   
-  parseInputFile();
+  Model model = parseInputFile();
   
   //This initializes glut
   glutInit(&argc, argv);
