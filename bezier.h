@@ -20,7 +20,7 @@ class Patch{
 	public:
 	Point points[4][4];
 	Patch(Point[4][4]);
-	//void interpolate(float, float);
+	Ray interpolate(float, float);
 	//void subDivide(float);
 	void draw();
 };

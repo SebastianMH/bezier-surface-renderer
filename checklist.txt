@@ -5,7 +5,7 @@ Write a program that can convert Bézier patches to polygons and then display th
 
 
 REQUIRED:
-[ ] Read in a list of patch data from a file.
+[X] Read in a list of patch data from a file.
 [ ] Tessellate/triangulate the patch using either a uniform or adaptive technique. (You have to implement both, your program will have a command-line flag to determine which is used.)
 [ ] Open a window and use OpenGL to Render the object.
 [ ] When "s" is pressed the program will toggle between flat and smooth shading.
@@ -15,7 +15,7 @@ REQUIRED:
 [ ] When the shift+arrow keys are pressed the object will be translated.
 [ ] When launched the initial zoom will show the entire object. Pressing the +/- keys will zoom in/
 out.
-[ ] Your program will take two command line arguments with a third option parameter. These
+[X] Your program will take two command line arguments with a third option parameter. These
 are: the input file name, the subdivision parameter, and a flag which determines if subdivision should be adaptive or uniform. An example command would look like:
 % myprogram3 inputfile.bez 0.1 -a 
 [ ] website
