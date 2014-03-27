@@ -107,14 +107,36 @@ Ray Patch::interpolate(float u, float v){
 //void Patch::subDivide(float step){}
 
 
-
+Model::Model(){}
 Model::Model(vector<Patch> p, Color c){
 	patches = p;
 	color = c;
-};
+}
 
 
-void Model::draw(){}
+void Model::draw(){
+// Rectangle Code
+
+  glColor3f(1.0f,0.0f,0.0f); 
+  Point A,B,C,D;
+
+	for (int i =0; i< patches.size(); i++){
+		A = patches[i].points[0][0];
+		B = patches[i].points[0][3];
+		C = patches[i].points[3][3];
+		D = patches[i].points[3][0];
+  		glBegin(GL_QUADS);                        // draw rectangle 
+		glVertex3f(A.x, A.y, A.z);               // bottom left corner of rectangle
+  		glVertex3f(B.x, B.y, B.z);               // top left corner of rectangle
+  		glVertex3f(C.x, C.y, C.z);               // top right corner of rectangle
+  		glVertex3f(D.x, D.y, D.z);               // bottom right corner of rectangle
+  		glEnd();
+  }
+
+
+
+
+}
 
 
 
