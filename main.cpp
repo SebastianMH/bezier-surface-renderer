@@ -209,7 +209,12 @@ void myReshape(int w, int h) {
   // glOrtho(-w/400.0, w/400.0, -h/400.0, h/400.0, 1, -1); // resize type = center
 
   glOrtho(-1, 1, -1, 1, 1, -1);    // resize type = stretch
-
+ //glOrtho(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble near, GLdouble far);
+ 
+  //gluPerspective(45, 1, 1, -1);
+  //gluPerspective(GLdouble fov, GLdouble aspect,                         GLdouble near, GLdouble far);
+  //(45?) fov specifies, in degrees, the angle in the y direction that is visible to the user;
+  //(1) aspect is the aspect ratio of the scene, which is width divided by the height
   //------------------------------------------------------------
 }
 

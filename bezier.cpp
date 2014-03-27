@@ -122,7 +122,7 @@ void Model::draw(){}
 /*
 // given a control patch and (u,v) values, find
 // the surface point and normal
-Ray bezpatchinterp(Point patch, u, v)
+Ray bezpatchinterp(Point patch, u, v) 
 	# build control points for a Bezier curve in v
 	vcurve[0] = bezcurveinterp(patch[0][0:3], u).point;
 	vcurve[1] = bezcurveinterp(patch[1][0:3], u).point;
@@ -141,8 +141,6 @@ Ray bezpatchinterp(Point patch, u, v)
 	n = cross(dPdu, dPdv)
 	n = n / length(n)
 	return p, n
-
-
 */
 
 
