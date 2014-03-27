@@ -52,7 +52,7 @@ string input_file_name;
 float sub_div_parameter;
 // switch from uniform to adaptive mode 
 bool adaptive = false;
-
+Model model;
 
 //****************************************************
 // Some Classes
@@ -92,7 +92,7 @@ vector<string> splitAtWhiteSpace(string const &input) {
 
 
 Model parseInputFile() {
-  ifstream input_file(input_file_name);
+  ifstream input_file(input_file_name.c_str());
   string line;
   if(input_file.is_open()) {
     int numPatches = 0;
@@ -204,17 +204,18 @@ void myReshape(int w, int h) {
   //----------- setting the projection -------------------------
   // glOrtho sets left, right, bottom, top, zNear, zFar of the chord system
 
-
   // glOrtho(-1, 1 + (w-400)/200.0 , -1 -(h-400)/200.0, 1, 1, -1); // resize type = add
   // glOrtho(-w/400.0, w/400.0, -h/400.0, h/400.0, 1, -1); // resize type = center
 
-  glOrtho(-1, 1, -1, 1, 1, -1);    // resize type = stretch
  //glOrtho(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble near, GLdouble far);
  
   //gluPerspective(45, 1, 1, -1);
   //gluPerspective(GLdouble fov, GLdouble aspect,                         GLdouble near, GLdouble far);
   //(45?) fov specifies, in degrees, the angle in the y direction that is visible to the user;
   //(1) aspect is the aspect ratio of the scene, which is width divided by the height
+  
+  glOrtho(-5, 5, -5, 5, 5, -5);    // resize type = stretch
+
   //------------------------------------------------------------
 }
 
@@ -234,6 +235,10 @@ void initScene(){
 //***************************************************
 void myDisplay() {
     
+    
+    
+    
+    
   //----------------------- ----------------------- -----------------------
   // This is a quick hack to add a little bit of animation.
   static float tip = 0.5f;
@@ -252,7 +257,7 @@ void myDisplay() {
   glLoadIdentity();                            // make sure transformation is "zero'd"
 
   //-----------------------------------------------------------------------
-
+	model.draw();
   glFlush();
   glutSwapBuffers();                           // swap buffers (we earlier set double buffer)
 }
@@ -277,7 +282,7 @@ int main(int argc, char *argv[]) {
     
   parseCommandlineArguments(argc, argv);
   
-  Model model = parseInputFile();
+  model = parseInputFile();
   
   //This initializes glut
   glutInit(&argc, argv);
