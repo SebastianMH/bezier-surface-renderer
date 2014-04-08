@@ -37,6 +37,15 @@ Point Point::operator-(Vector& v)
 Point Point::operator*(float scale)
 {return Point(x*scale,y*scale,z*scale);}
 
+Point Point::cross(Point p) {
+    return Point(((y*p.z)-(z*p.y)), ((z*p.x)-(x*p.z)), ((x*p.y)-(y*p.x)));
+}
+
+Point Point::normalize(){
+    float length = sqrt((x*x) + (y*y) + (z*z));
+    return Point(x/length, y/length, z/length);
+}
+
 void Point::print() {
     cout << "(" << x << ", " << y << ", " << z << ")";
 }

@@ -30,6 +30,8 @@ class Point{
 	Point operator-(Vector&);
 	Point operator+(Vector&);
 	Point operator*(float);
+	Point cross(Point);
+	Point normalize();
 	void print();
 };
 

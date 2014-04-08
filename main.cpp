@@ -48,11 +48,33 @@ using namespace std;
 // Global Variables
 //****************************************************
 
+//Change in location when keys are pressed
+float degree_step = 1;
+float translation_step = 0.1;
+
 string input_file_name;
 float sub_div_parameter;
 // switch from uniform to adaptive mode 
 bool adaptive = false;
 Model model;
+
+
+
+
+
+float zoom = 15.0f;
+float rotx = 0;
+float roty = 0.001f;
+float tx = 0;
+float ty = 0;
+int lastx=0;
+int lasty=0;
+unsigned char Buttons[3] = {0};
+
+
+
+
+
 
 //****************************************************
 // Some Classes
@@ -68,7 +90,28 @@ Viewport viewport;
 //****************************************************
 // Some Functions
 //****************************************************
+/******* lighting **********/
+void light (void) {
+    
+    GLfloat white[] = {1.0, 1.0, 1.0}; 
+    GLfloat low_red[] = {0.3, 0.0, 0.0};
+    GLfloat red[] = {1.0, 0.0, 0.0};
+    GLfloat black[] = {0.0, 0.0, 0.0};
+    GLfloat light_position[] = {-7.0, 7.0, 7.0, 0.0};
+    
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, red);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+}
+/******* lighting **********/
 
+/*
+Extracts commandline arguments, or returns an error if arguments are not valid.
+Commandline arguments should be formatted like this:
+main [inputfile.bez] [float subdivision parameter] optional[-a]
+
+example:
+./main models/teapot.bez 0.5
+*/
 void parseCommandlineArguments(int argc, char *argv[]) {
   if(argc < 3) {
     printf("\nWrong number of command-line arguments. Arguments should be in the format:\n");
@@ -84,6 +127,9 @@ void parseCommandlineArguments(int argc, char *argv[]) {
 }
 
 
+/*
+Splits a string at white space and returns extracted words as strings in a vector 
+*/
 vector<string> splitAtWhiteSpace(string const &input) { 
     istringstream buffer(input);
     vector<string> ret((istream_iterator<string>(buffer)), istream_iterator<string>());
@@ -91,6 +137,9 @@ vector<string> splitAtWhiteSpace(string const &input) {
 }
 
 
+/*
+Parses input file and returns a model
+*/
 Model parseInputFile() {
   ifstream input_file(input_file_name.c_str());
   string line;
@@ -129,94 +178,102 @@ Model parseInputFile() {
 
 
 //****************************************************
-// keyboard functions
+// Keyboard functions
 //****************************************************
 
 
 void special_keyboard(int key, int x, int y){
+  glMatrixMode(GL_MODELVIEW);
   
   switch(key){
-  case GLUT_KEY_RIGHT:
-    if(glutGetModifiers() == GLUT_ACTIVE_SHIFT) {
-      printf("object will be translated right\n");
-      break;
-    }
-    printf("object will be rotated right\n");
-    break;
-  case GLUT_KEY_LEFT:
-    if(glutGetModifiers() == GLUT_ACTIVE_SHIFT) {
-      printf("object will be translated left\n");
-      break;
-    }
-    printf("object will be rotated left\n");
-    break;
-  case GLUT_KEY_UP:
-    if(glutGetModifiers() == GLUT_ACTIVE_SHIFT) {
-      printf("object will be translated up\n");
-      break;
-    }
-    printf("object will be rotated up\n");
-    break;
-  case GLUT_KEY_DOWN:
-    if(glutGetModifiers() == GLUT_ACTIVE_SHIFT) {
-      printf("object will be translated down\n");
-      break;
-    }
-    printf("object will be rotated down\n");
-    break;
+      
+      case GLUT_KEY_RIGHT:
+        if(glutGetModifiers() == GLUT_ACTIVE_SHIFT) {
+          // object will be translated right
+          tx += translation_step;
+          break;
+        }
+        // object will be rotated right
+        roty += degree_step;
+        break;
+
+      case GLUT_KEY_LEFT:
+        if(glutGetModifiers() == GLUT_ACTIVE_SHIFT) {
+          // object will be translated left
+          tx -= translation_step;
+          break;
+        }
+        // object will be rotated left
+        roty -= degree_step;
+        break;
+
+      case GLUT_KEY_UP:
+        if(glutGetModifiers() == GLUT_ACTIVE_SHIFT) {
+          // object will be translated up
+          ty += translation_step;
+          break;
+        }
+        // object will be rotated up
+        rotx -= degree_step;
+        break;
+
+      case GLUT_KEY_DOWN:
+        if(glutGetModifiers() == GLUT_ACTIVE_SHIFT) {
+          // object will be translated down
+          ty -= translation_step;
+          break;
+        }
+        // object will be rotated down
+        rotx += degree_step;
+        break;
+
   }
 
 }
 
 void keyboard(unsigned char key, int x, int y){
+  glMatrixMode(GL_MODELVIEW);
   switch(key){
-  case 's':
-    printf("toggle between flat and smooth shading\n");
-    break;
-  case 'w':
-    printf("toggle between filled and wireframe mode.\n");
-    break;
-  case 'c':
-    printf("do vertex color shading based on the Gaussian Curvature of the surface.\n");
-    break;
-  case 43:
-    // PLUS sign +
-    printf("zoom in\n");
-    break;
-  case 45:
-    // MINUS sign -
-    printf("zoom out\n");
-    break;
+      case 's':
+        // toggle between flat and smooth shading
+        break;
+    
+      case 'w':
+        // toggle between filled and wireframe mode
+        break;
+    
+      case 'c':
+        // do vertex color shading based on the Gaussian Curvature of the surface.
+        break;
+    
+      case 61: // = sign (PLUS)
+        // zoom in
+        zoom -= translation_step;
+        break;
+    
+      case 45: // MINUS sign -
+        // zoom out
+        zoom += translation_step;
+        break;
   }
 }
 
+
 //****************************************************
-// reshape viewport if the window is resized
+// Reshape viewport if the window is resized
 //****************************************************
 void myReshape(int w, int h) {
   viewport.w = w;
   viewport.h = h;
-
+  
+  glMatrixMode(GL_PROJECTION);  
   glViewport(0,0,viewport.w,viewport.h);// sets the rectangle that will be the window
-  glMatrixMode(GL_PROJECTION);
   glLoadIdentity();                // loading the identity matrix for the screen
 
-  //----------- setting the projection -------------------------
-  // glOrtho sets left, right, bottom, top, zNear, zFar of the chord system
-
-  // glOrtho(-1, 1 + (w-400)/200.0 , -1 -(h-400)/200.0, 1, 1, -1); // resize type = add
-  // glOrtho(-w/400.0, w/400.0, -h/400.0, h/400.0, 1, -1); // resize type = center
-
- //glOrtho(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble near, GLdouble far);
- 
-  //gluPerspective(45, 1, 1, -1);
-  //gluPerspective(GLdouble fov, GLdouble aspect,                         GLdouble near, GLdouble far);
-  //(45?) fov specifies, in degrees, the angle in the y direction that is visible to the user;
-  //(1) aspect is the aspect ratio of the scene, which is width divided by the height
   
-  glOrtho(-5, 5, -5, 5, 5, -5);    // resize type = stretch
-
-  //------------------------------------------------------------
+	gluPerspective(45,(float)w/h,0.1,100);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 }
 
 
@@ -224,9 +281,23 @@ void myReshape(int w, int h) {
 // sets the window up
 //****************************************************
 void initScene(){
-  glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Clear to black, fully transparent
+// prevent divide by 0 error when minimised
+if(viewport.w==0) 
+	viewport.h = 1;
 
-  myReshape(viewport.w,viewport.h);
+glViewport(0,0,viewport.w,viewport.h);
+glMatrixMode(GL_PROJECTION);
+glLoadIdentity();
+gluPerspective(45,(float)viewport.w/viewport.h,0.1,100);
+glMatrixMode(GL_MODELVIEW);
+glLoadIdentity();
+  
+  /******* lighting **********/
+  glEnable (GL_DEPTH_TEST);
+  glEnable (GL_LIGHTING);
+  glEnable (GL_LIGHT0);
+  /******* lighting **********/
+  
 }
 
 
@@ -234,30 +305,23 @@ void initScene(){
 // function that does the actual drawing
 //***************************************************
 void myDisplay() {
-    
-    
-    
-    
-    
-  //----------------------- ----------------------- -----------------------
-  // This is a quick hack to add a little bit of animation.
-  static float tip = 0.5f;
-  const  float stp = 0.01f;
-  const  float beg = 0.1f;
-  const  float end = 0.9f;
 
-  tip += stp;
-  if (tip>end) tip = beg;
-  //----------------------- ----------------------- -----------------------
+	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+	
+	glLoadIdentity();
+
+	glTranslatef(0,0,-zoom);
+	glTranslatef(tx,ty,0);
+	glRotatef(rotx,1,0,0);
+	glRotatef(roty,0,1,0);
 
 
-  glClear(GL_COLOR_BUFFER_BIT);                // clear the color buffer (sets everything to black)
-
-  glMatrixMode(GL_MODELVIEW);                  // indicate we are specifying camera transformations
-  glLoadIdentity();                            // make sure transformation is "zero'd"
-
-  //-----------------------------------------------------------------------
-	model.draw();
+  ///-----------------------------------------------------------------------
+  light();
+  //GLfloat purple[] = {1.0, 0, 1.0}; 
+  //glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, purple);
+  model.draw();  
+  
   glFlush();
   glutSwapBuffers();                           // swap buffers (we earlier set double buffer)
 }
@@ -274,6 +338,54 @@ void myFrameMove() {
   glutPostRedisplay(); // forces glut to call the display function (myDisplay())
 }
 
+void Motion(int x,int y)
+{
+	int diffx=x-lastx;
+	int diffy=y-lasty;
+	lastx=x;
+	lasty=y;
+
+	if( Buttons[0] && Buttons[1] )
+	{
+		zoom -= (float) 0.05f * diffx;
+	}
+	else
+		if( Buttons[0] )
+		{
+			rotx += (float) 0.5f * diffy;
+			roty += (float) 0.5f * diffx;		
+		}
+		else
+			if( Buttons[1] )
+			{
+				tx += (float) 0.05f * diffx;
+				ty -= (float) 0.05f * diffy;
+			}
+			glutPostRedisplay();
+}
+
+//-------------------------------------------------------------------------------
+//
+void Mouse(int b,int s,int x,int y)
+{
+	lastx=x;
+	lasty=y;
+	switch(b)
+	{
+	case GLUT_LEFT_BUTTON:
+		Buttons[0] = ((GLUT_DOWN==s)?1:0);
+		break;
+	case GLUT_MIDDLE_BUTTON:
+		Buttons[1] = ((GLUT_DOWN==s)?1:0);
+		break;
+	case GLUT_RIGHT_BUTTON:
+		Buttons[2] = ((GLUT_DOWN==s)?1:0);
+		break;
+	default:
+		break;		
+	}
+	glutPostRedisplay();
+}
 
 //****************************************************
 // the usual stuff, nothing exciting here
@@ -281,14 +393,14 @@ void myFrameMove() {
 int main(int argc, char *argv[]) {
     
   parseCommandlineArguments(argc, argv);
-  
   model = parseInputFile();
+  
   
   //This initializes glut
   glutInit(&argc, argv);
 
   //This tells glut to use a double-buffered window with red, green, and blue channels 
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB|GLUT_DEPTH);
 
   // Initalize theviewport size
   viewport.w = 1000;//1280
@@ -305,7 +417,9 @@ int main(int argc, char *argv[]) {
   
   glutKeyboardFunc(keyboard);
   glutSpecialFunc(special_keyboard);
-  
+  	glutMouseFunc(Mouse);
+	glutMotionFunc(Motion);
+
   glutIdleFunc(myFrameMove);                   // function to run when not handling any other task
   glutMainLoop();                              // infinite loop that will keep drawing and resizing and whatever else
 

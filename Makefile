@@ -7,7 +7,7 @@ ifeq ($(shell sw_vers 2>/dev/null | grep Mac | awk '{ print $$2}'),Mac)
     	-lGL -lGLU -lm -lstdc++
 else
 	CFLAGS = -g -DGL_GLEXT_PROTOTYPES -Iexample_00/glut-3.7.6-bin -w -fmax-errors=4
-	LDFLAGS = -lglut -lGL
+	LDFLAGS = -lglut -lGL -w
 endif
 
 RM = /bin/rm -f 
@@ -22,7 +22,7 @@ main.o: main.cpp
 
 bezier.o: bezier.cpp
 	$(CC) $(CFLAGS) -c bezier.cpp
-	
+
 utility.o: utility.cpp
 	$(CC) $(CFLAGS) -c utility.cpp
 

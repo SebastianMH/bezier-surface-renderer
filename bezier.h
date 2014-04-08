@@ -35,7 +35,10 @@ class Patch{
 };
 
 
-
+/*
+A model contains a vector of patches. Each of which has a 4x4 array of
+points.
+*/
 class Model{
 	public:
 	vector<Patch> patches;
