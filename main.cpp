@@ -394,6 +394,11 @@ int main(int argc, char *argv[]) {
     
   parseCommandlineArguments(argc, argv);
   model = parseInputFile();
+  model.uSubDivide();
+  model.uSubDivide();
+  model.uSubDivide();
+  model.uSubDivide();
+  model.uSubDivide();
   
   
   //This initializes glut

@@ -29,8 +29,9 @@ class Patch{
 	public:
 	Point points[4][4];
 	Patch(Point[4][4]);
+	Patch(PointMatrix);
 	Ray interpolate(float, float);
-	//void subDivide(float);
+	vector<Patch> subDivide();
 	void draw();
 };
 
@@ -46,6 +47,7 @@ class Model{
 	Model();
 	Model(vector<Patch>, Color);
 	void draw();
+	void uSubDivide();
 };
 
 

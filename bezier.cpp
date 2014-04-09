@@ -65,6 +65,15 @@ Patch::Patch(Point p[4][4]){
 	}
 }
 
+Patch::Patch(PointMatrix p){
+	for (int i=0;i<4;i++){
+		for (int j=0;j<4;j++){
+			points[i][j] = p.matrix[i][j];
+		}
+	}
+}
+
+
 Ray Patch::interpolate(float u, float v){
 	Point ucurve[4];
 	Point vcurve[4];
@@ -107,7 +116,38 @@ Ray Patch::interpolate(float u, float v){
 	uRay.vector.normalize();
 	return uRay;
 }
-//void Patch::subDivide(float step){}
+vector<Patch> Patch::subDivide(){
+	float hz1_array[4][4] = {{  1.0,  0.0,  0.0,  0.0},
+				     	    {  0.5,  0.5,  0.0,  0.0},
+					        { 0.25,  0.5, 0.25,  0.0},
+					        {0.125,0.375,0.375,0.125}};
+				
+	float hz2_array[4][4] = {{0.125,0.375,0.375,0.125},
+					  		{  0.0, 0.25,  0.5, 0.25},
+			   		  		{  0.0,  0.0,  0.5,  0.5},
+					  		{  0.0,  0.0,  0.0,  1.0}};
+	Matrix Hz1(hz1_array);
+	Matrix Hz2(hz2_array);
+	PointMatrix P(points);
+
+	PointMatrix P11 = Hz1.mult(P).mult(Hz1.transpose());
+	PointMatrix P12 = Hz1.mult(P).mult(Hz2.transpose());
+	PointMatrix P21 = Hz2.mult(P).mult(Hz1.transpose());
+	PointMatrix P22 = Hz2.mult(P).mult(Hz2.transpose());
+	
+	Patch patch11(P11);
+	Patch patch12(P12);
+	Patch patch21(P21);
+	Patch patch22(P22);
+	
+	vector<Patch> newPatches;
+	newPatches.push_back(patch11);
+	newPatches.push_back(patch12);
+	newPatches.push_back(patch21);
+	newPatches.push_back(patch22);
+	
+	return newPatches;
+}
 
 
 Model::Model(){}
@@ -146,8 +186,18 @@ void Model::draw(){
 
 }
 
-
-
+void Model::uSubDivide(){
+	int numPatches = patches.size();
+	vector<Patch> temp;
+	for (int i = 0; i < numPatches; i++){
+		temp = patches[i].subDivide();
+		patches[i] = temp[0];
+		patches.push_back(temp[1]);
+		patches.push_back(temp[2]);
+		patches.push_back(temp[3]);
+		
+	}
+}
 
 /*
 // given a control patch and (u,v) values, find
