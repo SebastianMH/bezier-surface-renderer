@@ -61,20 +61,6 @@ float Point::distance(Point p){
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Vector::Vector(){}
 Vector::Vector(float xx, float yy, float zz){
 	x = xx;

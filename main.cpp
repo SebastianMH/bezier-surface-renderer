@@ -56,6 +56,9 @@ string input_file_name;
 float sub_div_parameter;
 // switch from uniform to adaptive mode 
 bool adaptive = false;
+bool flat_shading = false;
+bool wireframe = false;
+bool hiddenLineMode = false;
 Model model;
 
 
@@ -236,11 +239,48 @@ void keyboard(unsigned char key, int x, int y){
   switch(key){
       case 's':
         // toggle between flat and smooth shading
+        flat_shading = !flat_shading;
+        if (flat_shading){
+        	glShadeModel(GL_FLAT);
+        }else{
+        	glShadeModel(GL_SMOOTH);
+        }
         break;
     
       case 'w':
         // toggle between filled and wireframe mode
+        wireframe = !wireframe;
+        if(wireframe){
+        	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+        	glDisable(GL_LIGHTING);
+        }else{
+        	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+        	glEnable(GL_LIGHTING);
+        }
         break;
+        
+	case 'h':
+        // toggle between filled and wireframe mode
+        hiddenLineMode = !hiddenLineMode;
+        if(hiddenLineMode){
+ 
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glDisable(GL_LIGHTING);
+			model.draw();
+
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glEnable(GL_POLYGON_OFFSET_FILL);
+			glPolygonOffset(0.5, 0.5);
+			glColor3f(0.0,0.0,0.0);
+			model.draw();
+			glDisable(GL_POLYGON_OFFSET_FILL);
+			glColor3f(1.0,1.0,1.0);
+        }else{
+        	//glPolygonMode( GL_FRONT, GL_FILL );
+        	//glEnable(GL_LIGHTING);
+        }
+        break;
+    
     
       case 'c':
         // do vertex color shading based on the Gaussian Curvature of the surface.

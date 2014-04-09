@@ -161,32 +161,26 @@ Model::Model(vector<Patch> p, Color c){
 
 
 void Model::draw(){
-// Rectangle Code
+	//glEnable(GL_NORMALIZE);
+	Point A,B,C,D;
 
-  //glColor3f(1.0f,0.0f,0.0f); 
-  Point A,B,C,D;
-
-  for (int i = 0; i< patches.size(); i++){
-      for (int u = 0; u < 3; u++){
-          for (int v =0; v < 3; v++){
-              A = patches[i].points[0 +u][0 +v];
-      		  B = patches[i].points[0 +u][1 +v];
-      		  C = patches[i].points[1 +u][1 +v];
-              D = patches[i].points[1 +u][0 +v];
-              glBegin(GL_QUADS);                       // draw rectangle 
-              Point normal = ((A-B).cross(A-C)).normalize();
-              GLfloat gl_normal[] = {normal.x, normal.y, normal.z};
-              glNormal3fv(gl_normal);
-              glVertex3f(A.x, A.y, A.z);               // bottom left corner of rectangle
-              glVertex3f(B.x, B.y, B.z);               // top left corner of rectangle
-              glVertex3f(C.x, C.y, C.z);               // top right corner of rectangle
-              glVertex3f(D.x, D.y, D.z);               // bottom right corner of rectangle
-              glEnd();
-          }
-      }
-  }
-  
-
+	for (int i = 0; i< patches.size(); i++){
+      
+		A = patches[i].points[0][0];
+		B = patches[i].points[0][3];
+		C = patches[i].points[3][3];
+		D = patches[i].points[3][0];
+              
+		glBegin(GL_QUADS);                       // draw rectangle 
+		Point normal = ((A-B).cross(A-C)).normalize();
+		GLfloat gl_normal[] = {normal.x, normal.y, normal.z};
+		glNormal3fv(gl_normal);
+		glVertex3f(A.x, A.y, A.z);               // bottom left corner of rectangle
+		glVertex3f(B.x, B.y, B.z);               // top left corner of rectangle
+		glVertex3f(C.x, C.y, C.z);               // top right corner of rectangle
+		glVertex3f(D.x, D.y, D.z);               // bottom right corner of rectangle
+		glEnd();
+	}
 }
 
 
