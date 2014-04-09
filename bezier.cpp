@@ -1,6 +1,9 @@
 #include "bezier.h"
 
 
+
+
+
 // given the control points of a bezier curve
 // and a parametric value, return the curve
 // point and derivative
