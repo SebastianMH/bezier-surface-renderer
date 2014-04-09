@@ -33,6 +33,7 @@ class Patch{
 	Ray interpolate(float, float);
 	vector<Patch> subDivide();
 	void draw();
+	Point midpoint();
 };
 
 
@@ -47,7 +48,8 @@ class Model{
 	Model();
 	Model(vector<Patch>, Color);
 	void draw();
-	void uSubDivide();
+	void uSubDivide(float);
+	void aSubDivide(float);
 };
 
 

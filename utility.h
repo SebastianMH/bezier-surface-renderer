@@ -36,6 +36,7 @@ class Point{
 	Point cross(Point);
 	Point normalize();
 	void print();
+	float distance(Point);
 };
 
 

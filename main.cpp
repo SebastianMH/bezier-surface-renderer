@@ -121,7 +121,7 @@ void parseCommandlineArguments(int argc, char *argv[]) {
   input_file_name = argv[1];
   sub_div_parameter = atof(argv[2]);
   
-  if(argc == 4 && strcmp(argv[3],"-a")) {
+  if(argc == 4 && strcmp(argv[3],"-a") ==0) {
     adaptive = true;
   }
 }
@@ -394,11 +394,13 @@ int main(int argc, char *argv[]) {
     
   parseCommandlineArguments(argc, argv);
   model = parseInputFile();
-  model.uSubDivide();
-  model.uSubDivide();
-  model.uSubDivide();
-  model.uSubDivide();
-  model.uSubDivide();
+  if (adaptive){
+  	model.aSubDivide(sub_div_parameter);
+  	printf("adaptive");
+  }else{
+  	model.uSubDivide(sub_div_parameter);
+  }
+
   
   
   //This initializes glut

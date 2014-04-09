@@ -149,6 +149,9 @@ vector<Patch> Patch::subDivide(){
 	return newPatches;
 }
 
+Point Patch::midpoint(){
+	return (points[0][0]+points[0][3]+points[3][0]+points[3][3])*0.25;
+}
 
 Model::Model(){}
 Model::Model(vector<Patch> p, Color c){
@@ -186,18 +189,45 @@ void Model::draw(){
 
 }
 
-void Model::uSubDivide(){
-	int numPatches = patches.size();
+
+void Model::uSubDivide(float step){
+	int numPatches, i, j;
+	int divisions = (int)(log(1.0/step)/log(2.0)); //note: check what prof wants regarding subdivision into two parts
 	vector<Patch> temp;
-	for (int i = 0; i < numPatches; i++){
-		temp = patches[i].subDivide();
-		patches[i] = temp[0];
-		patches.push_back(temp[1]);
-		patches.push_back(temp[2]);
-		patches.push_back(temp[3]);
-		
+	for (i = 0; i < divisions; i++){
+		numPatches = patches.size();
+		for (j = 0; j < numPatches; j++){
+			temp = patches[j].subDivide();
+			patches[j] = temp[0];
+			patches.push_back(temp[1]);
+			patches.push_back(temp[2]);
+			patches.push_back(temp[3]);
+		}
 	}
 }
+
+void Model::aSubDivide(float tolerance){
+	int i;
+	float error;
+	Point surface, polygon;
+	vector<Patch> temp;
+	
+	for (i = 0; i < patches.size(); i++){
+		surface = patches[i].interpolate(0.5, 0.5).point;
+		polygon = patches[i].midpoint();
+		error = surface.distance(polygon);
+		if(error > tolerance){
+			temp = patches[i].subDivide();
+			patches[i] = temp[0];
+			patches.push_back(temp[1]);
+			patches.push_back(temp[2]);
+			patches.push_back(temp[3]);
+			i--;
+		}
+	}
+}
+
+
 
 /*
 // given a control patch and (u,v) values, find

@@ -53,8 +53,12 @@ void Point::print() {
     cout << "(" << x << ", " << y << ", " << z << ")";
 }
 
-
-
+float Point::distance(Point p){
+	float dx = x-p.x;
+	float dy = y-p.y;
+	float dz = z-p.z;
+	return sqrt( dx*dx + dy*dy + dz*dz );
+}
 
 
 
