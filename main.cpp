@@ -440,9 +440,7 @@ int main(int argc, char *argv[]) {
   }else{
   	model.uSubDivide(sub_div_parameter);
   }
-
-  
-  
+   
   //This initializes glut
   glutInit(&argc, argv);
 
@@ -462,10 +460,12 @@ int main(int argc, char *argv[]) {
   glutDisplayFunc(myDisplay);                  // function to run when its time to draw something
   glutReshapeFunc(myReshape);                  // function to run when the window gets resized
   
+  
   glutKeyboardFunc(keyboard);
   glutSpecialFunc(special_keyboard);
-  	glutMouseFunc(Mouse);
-	glutMotionFunc(Motion);
+  glutMouseFunc(Mouse);
+  glutMotionFunc(Motion);
+
 
   glutIdleFunc(myFrameMove);                   // function to run when not handling any other task
   glutMainLoop();                              // infinite loop that will keep drawing and resizing and whatever else

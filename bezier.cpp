@@ -1,9 +1,6 @@
 #include "bezier.h"
 
 
-
-
-
 // given the control points of a bezier curve
 // and a parametric value, return the curve
 // point and derivative
@@ -32,31 +29,34 @@ Ray bezcurveinterp(Point curve[], float u){
 	return Ray(p, dPdu);
 }
 
-/*
-Curve::Curve(Point aa, Point bb, Point cc, Point dd){
-	a = aa;
-	b = bb;
-	c = cc;
-	d = dd;
+
+Triangle::Triangle(){}
+
+
+Triangle::Triangle(Point aa, Point bb, Point cc){
+    a = aa;
+    b = bb;
+    c = cc;
 }
-Ray Curve::interpolate(float u){
-	// first, split each of the three segments
-	// to form two new ones AB and BC
-	A = a * (1.0-u) + b * u;
-	B = b * (1.0-u) + c * u;
-	C = c * (1.0-u) + d * u;
-	// now, split AB and BC to form a new segment DE
-	D = A * (1.0-u) + B * u;
-	E = B * (1.0-u) + C * u;
-	// finally, pick the right point on DE,
-	// this is the point on the curve
-	p = D * (1.0-u) + E * u;
-	// compute derivative also
-	dPdu = 3 * (E - D);
-	
-	return Ray(p, dPdu);
+
+
+void Triangle::draw(){
+    glBegin(GL_TRIANGLES);
+	Point normal = ((a-b).cross(a-c)).normalize();
+	GLfloat gl_normal[] = {normal.x, normal.y, normal.z};
+	glNormal3fv(gl_normal);
+	glVertex3f(a.x, a.y, a.z);
+	glVertex3f(b.x, b.y, b.z);
+	glVertex3f(c.x, c.y, c.z);
+	glEnd();
 }
-*/
+
+
+Point Triangle::midpoint(){
+    return (a + b + c)*(1.0/3.0);
+}
+
+
 Patch::Patch(Point p[4][4]){
 	for (int i=0;i<4;i++){
 		for (int j=0;j<4;j++){
@@ -64,6 +64,7 @@ Patch::Patch(Point p[4][4]){
 		}
 	}
 }
+
 
 Patch::Patch(PointMatrix p){
 	for (int i=0;i<4;i++){
@@ -116,44 +117,49 @@ Ray Patch::interpolate(float u, float v){
 	uRay.vector.normalize();
 	return uRay;
 }
-vector<Patch> Patch::subDivide(){
-	float hz1_array[4][4] = {{  1.0,  0.0,  0.0,  0.0},
-				     	    {  0.5,  0.5,  0.0,  0.0},
-					        { 0.25,  0.5, 0.25,  0.0},
-					        {0.125,0.375,0.375,0.125}};
-				
-	float hz2_array[4][4] = {{0.125,0.375,0.375,0.125},
-					  		{  0.0, 0.25,  0.5, 0.25},
-			   		  		{  0.0,  0.0,  0.5,  0.5},
-					  		{  0.0,  0.0,  0.0,  1.0}};
-	Matrix Hz1(hz1_array);
-	Matrix Hz2(hz2_array);
-	PointMatrix P(points);
 
-	PointMatrix P11 = Hz1.mult(P).mult(Hz1.transpose());
-	PointMatrix P12 = Hz1.mult(P).mult(Hz2.transpose());
-	PointMatrix P21 = Hz2.mult(P).mult(Hz1.transpose());
-	PointMatrix P22 = Hz2.mult(P).mult(Hz2.transpose());
-	
-	Patch patch11(P11);
-	Patch patch12(P12);
-	Patch patch21(P21);
-	Patch patch22(P22);
-	
-	vector<Patch> newPatches;
-	newPatches.push_back(patch11);
-	newPatches.push_back(patch12);
-	newPatches.push_back(patch21);
-	newPatches.push_back(patch22);
-	
-	return newPatches;
+
+void Patch::uSubDivide(float step){
+    
+	int iu, iv;
+    float u,v;
+    Point a,b,c;
+	int numDiv = (int)floor(1.0/step); //note: check what prof wants regarding subdivision into two parts
+    step = 1.0/numDiv;
+    printf("%f",step);
+	for (iu = 0; iu < numDiv; iu++){
+		for (iv = 0; iv < numDiv; iv++){
+            u = iu*step;
+            v = iv*step;
+
+            a = interpolate(u,v).point;
+            b = interpolate(u,v+step).point;
+            c = interpolate(u+step,v).point;
+			triangles.push_back(Triangle(a,b,c));
+			
+			a = interpolate(u+step,v+step).point;
+			triangles.push_back(Triangle(c,b,a));
+						
+		}
+	}
 }
+
 
 Point Patch::midpoint(){
 	return (points[0][0]+points[0][3]+points[3][0]+points[3][3])*0.25;
 }
 
+
+void Patch::draw(){
+    for (int i = 0; i < triangles.size(); i++){
+        triangles[i].draw();
+    }
+}
+
+
 Model::Model(){}
+
+
 Model::Model(vector<Patch> p, Color c){
 	patches = p;
 	color = c;
@@ -161,46 +167,21 @@ Model::Model(vector<Patch> p, Color c){
 
 
 void Model::draw(){
-	//glEnable(GL_NORMALIZE);
-	Point A,B,C,D;
-
-	for (int i = 0; i< patches.size(); i++){
-      
-		A = patches[i].points[0][0];
-		B = patches[i].points[0][3];
-		C = patches[i].points[3][3];
-		D = patches[i].points[3][0];
-              
-		glBegin(GL_QUADS);                       // draw rectangle 
-		Point normal = ((A-B).cross(A-C)).normalize();
-		GLfloat gl_normal[] = {normal.x, normal.y, normal.z};
-		glNormal3fv(gl_normal);
-		glVertex3f(A.x, A.y, A.z);               // bottom left corner of rectangle
-		glVertex3f(B.x, B.y, B.z);               // top left corner of rectangle
-		glVertex3f(C.x, C.y, C.z);               // top right corner of rectangle
-		glVertex3f(D.x, D.y, D.z);               // bottom right corner of rectangle
-		glEnd();
-	}
+	for (int i = 0; i < patches.size(); i++){
+        patches[i].draw();
+    }
 }
 
 
 void Model::uSubDivide(float step){
-	int numPatches, i, j;
-	int divisions = (int)(log(1.0/step)/log(2.0)); //note: check what prof wants regarding subdivision into two parts
-	vector<Patch> temp;
-	for (i = 0; i < divisions; i++){
-		numPatches = patches.size();
-		for (j = 0; j < numPatches; j++){
-			temp = patches[j].subDivide();
-			patches[j] = temp[0];
-			patches.push_back(temp[1]);
-			patches.push_back(temp[2]);
-			patches.push_back(temp[3]);
-		}
-	}
+    for (int i = 0; i < patches.size(); i++){
+        patches[i].uSubDivide(step);
+    }
 }
 
+
 void Model::aSubDivide(float tolerance){
+    /*
 	int i;
 	float error;
 	Point surface, polygon;
@@ -218,59 +199,5 @@ void Model::aSubDivide(float tolerance){
 			patches.push_back(temp[3]);
 			i--;
 		}
-	}
+	}*/
 }
-
-
-
-/*
-// given a control patch and (u,v) values, find
-// the surface point and normal
-Ray bezpatchinterp(Point patch, u, v) 
-	# build control points for a Bezier curve in v
-	vcurve[0] = bezcurveinterp(patch[0][0:3], u).point;
-	vcurve[1] = bezcurveinterp(patch[1][0:3], u).point;
-	vcurve[2] = bezcurveinterp(patch[2][0:3], u).point;
-	vcurve[3] = bezcurveinterp(patch[3][0:3], u).point;
-	# build control points for a Bezier curve in u
-	ucurve[0] = bezcurveinterp(patch[0:3][0], v).point;
-	ucurve[1] = bezcurveinterp(patch[0:3][1], v).point;
-	ucurve[2] = bezcurveinterp(patch[0:3][2], v).point;
-	ucurve[3] = bezcurveinterp(patch[0:3][3], v).point;
-
-	# evaluate surface and derivative for u and v
-	p, dPdv = bezcurveinterp(vcurve, v)
-	p, dPdu = bezcurveinterp(ucurve, u)
-	# take cross product of partials to find normal
-	n = cross(dPdu, dPdv)
-	n = n / length(n)
-	return p, n
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

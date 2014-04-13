@@ -2,6 +2,7 @@
 #define BEZIER_H
 
 #include <vector>
+#include "utility.h"
 
 #ifdef OSX
 #include <GLUT/glut.h>
@@ -11,39 +12,36 @@
 #include <GL/glu.h>
 #endif
 
-#include "utility.h"
-
 using namespace std;
 
-/*
-class Curve{
-	public:
-	Point a,b,c,d;
-	Curve();
-	Curve(Point, Point, Point, Point);
-	Ray interpolate(float);
+
+class Triangle{
+    public:
+    Point a,b,c;
+    Triangle();
+    Triangle(Point, Point, Point);
+    void draw();
+    Point midpoint();
 };
 
-*/
+
 class Patch{
 	public:
 	Point points[4][4];
 	Patch(Point[4][4]);
+	vector<Triangle> triangles;
 	Patch(PointMatrix);
 	Ray interpolate(float, float);
-	vector<Patch> subDivide();
+	void uSubDivide(float);
 	void draw();
 	Point midpoint();
 };
 
 
-/*
-A model contains a vector of patches. Each of which has a 4x4 array of
-points.
-*/
 class Model{
 	public:
 	vector<Patch> patches;
+    
 	Color color;
 	Model();
 	Model(vector<Patch>, Color);
