@@ -250,37 +250,12 @@ void keyboard(unsigned char key, int x, int y){
       case 'w':
         // toggle between filled and wireframe mode
         wireframe = !wireframe;
-        if(wireframe){
-        	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-        	glDisable(GL_LIGHTING);
-        }else{
-        	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
-        	glEnable(GL_LIGHTING);
-        }
         break;
         
 	case 'h':
         // toggle between filled and wireframe mode
         hiddenLineMode = !hiddenLineMode;
-        if(hiddenLineMode){
- 
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			glDisable(GL_LIGHTING);
-			model.draw();
-
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			glEnable(GL_POLYGON_OFFSET_FILL);
-			glPolygonOffset(0.5, 0.5);
-			glColor3f(0.0,0.0,0.0);
-			model.draw();
-			glDisable(GL_POLYGON_OFFSET_FILL);
-			glColor3f(1.0,1.0,1.0);
-        }else{
-        	//glPolygonMode( GL_FRONT, GL_FILL );
-        	//glEnable(GL_LIGHTING);
-        }
         break;
-    
     
       case 'c':
         // do vertex color shading based on the Gaussian Curvature of the surface.
@@ -360,8 +335,29 @@ void myDisplay() {
   light();
   //GLfloat purple[] = {1.0, 0, 1.0}; 
   //glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, purple);
-  model.draw();  
   
+  if(wireframe) {
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  	  glDisable(GL_LIGHTING);
+      model.draw();
+  }
+  else if(hiddenLineMode) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glDisable(GL_LIGHTING);
+        model.draw();
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset(0.5, 0.5);
+        glColor3f(0.0,0.0,0.0);
+        model.draw();
+        glDisable(GL_POLYGON_OFFSET_FILL);
+        glColor3f(1.0,1.0,1.0);
+    } else {
+        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+    	glEnable(GL_LIGHTING);
+        model.draw();
+    }  
+
   glFlush();
   glutSwapBuffers();                           // swap buffers (we earlier set double buffer)
 }
@@ -431,16 +427,17 @@ void Mouse(int b,int s,int x,int y)
 // the usual stuff, nothing exciting here
 //****************************************************
 int main(int argc, char *argv[]) {
-    
+      
   parseCommandlineArguments(argc, argv);
   model = parseInputFile();
   if (adaptive){
   	model.aSubDivide(sub_div_parameter);
-  	printf("adaptive");
   }else{
   	model.uSubDivide(sub_div_parameter);
   }
-   
+  
+  
+  
   //This initializes glut
   glutInit(&argc, argv);
 

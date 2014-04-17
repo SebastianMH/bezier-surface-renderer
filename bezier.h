@@ -18,10 +18,12 @@ using namespace std;
 class Triangle{
     public:
     Point a,b,c;
+    Point auv,buv,cuv;
     Triangle();
     Triangle(Point, Point, Point);
     void draw();
     Point midpoint();
+    void print();
 };
 
 
@@ -33,6 +35,7 @@ class Patch{
 	Patch(PointMatrix);
 	Ray interpolate(float, float);
 	void uSubDivide(float);
+	void aSubDivide(float);
 	void draw();
 	Point midpoint();
 };

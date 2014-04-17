@@ -104,6 +104,7 @@ Ray::Ray(Point p, Vector v){
 	vector = v;
 }
 
+
 Matrix::Matrix(float imatrix[][4]) {
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++)
@@ -218,7 +219,6 @@ PointMatrix PointMatrix::mult(Matrix matrix2) {
 	}
     return PointMatrix(result);
 }
-
 
 
 
