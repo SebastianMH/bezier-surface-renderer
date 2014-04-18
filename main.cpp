@@ -53,6 +53,7 @@ float degree_step = 1;
 float translation_step = 0.4;
 
 string input_file_name;
+string output_file_name = "";
 float sub_div_parameter;
 // switch from uniform to adaptive mode 
 bool adaptive = false;
@@ -123,12 +124,21 @@ void parseCommandlineArguments(int argc, char *argv[]) {
   }
   input_file_name = argv[1];
   sub_div_parameter = atof(argv[2]);
-  
-  if(argc == 4 && strcmp(argv[3],"-a") ==0) {
-    adaptive = true;
+  // The optional parameters
+  if(argc > 3) {
+    int i = 3;
+    while(i < argc) {
+      if(strcmp(argv[i],"-a") == 0) {
+        adaptive = true;
+      } else if(strcmp(argv[i],"-o") == 0) {
+        output_file_name = argv[i+1];
+        i++;
+      }
+      i++;
+    }
   }
-
 }
+
 
 
 /*
@@ -225,6 +235,32 @@ Model parseObjFile() {
       printf("input file was not found\n");
       exit(1);
   }
+}
+
+
+void modelToOutputFile(Model model) {
+  Patch curr_patch;
+  Triangle curr_triangle;
+  int vertex_count = 1;
+  ofstream output_file;
+  output_file.open (output_file_name);
+  Point a,b,c;
+
+  for(int i = 0; i < model.patches.size(); i++) {
+    curr_patch = model.patches[i];
+    for(int j = 0; j < curr_patch.triangles.size(); j++) {
+      curr_triangle = curr_patch.triangles[j];
+      a = curr_triangle.a;
+      b = curr_triangle.b;
+      c = curr_triangle.c;
+      output_file << "v " << a.x << " " << a.y << " " << a.z << "\n";
+      output_file << "v " << b.x << " " << b.y << " " << b.z << "\n";
+      output_file << "v " << c.x << " " << c.y << " " << c.z << "\n";
+      output_file << "f " << vertex_count << " " << vertex_count+1 << " " << vertex_count+2 << "\n";
+      vertex_count += 3;
+    }
+  }
+  output_file.close();
 }
 
 //****************************************************
@@ -484,7 +520,6 @@ int main(int argc, char *argv[]) {
   
   string extension = input_file_name.substr(input_file_name.size() - 3);
   if(extension.compare("bez") == 0) {
-      printf("HERE");
       model = parseBezFile();
       if (adaptive){
           model.aSubDivide(sub_div_parameter);
@@ -493,6 +528,11 @@ int main(int argc, char *argv[]) {
       }
   } else {
       model = parseObjFile();
+  }
+  
+  if(output_file_name.compare("") != 0) {
+    modelToOutputFile(model);
+    exit(0);
   }
   
   //This initializes glut

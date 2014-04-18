@@ -24,7 +24,7 @@ are: the input file name, the subdivision parameter, and a flag which determines
 OPTIONAL:
 [X] When "h" is pressed the program will toggle between filled and hidden-line mode.
 [X] The use of OBJ input
-[ ] The use of OBJ output
+[X] The use of OBJ output
 [ ] Add the ability to load multiple objects (for example a mix of .bez and .obj files) and display them each with different transformations. 
 [ ]  Refer to the example GLSL code posted on the website and implement a custom shader for your object display.
 [ ] video of use
