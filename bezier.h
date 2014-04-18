@@ -2,6 +2,7 @@
 #define BEZIER_H
 
 #include <vector>
+#include <stdio.h>
 #include "utility.h"
 
 #ifdef OSX
@@ -19,9 +20,13 @@ class Triangle{
     public:
     Point a,b,c;
     Point auv,buv,cuv;
+    Point normal, na, nb, nc;
     Triangle();
     Triangle(Point, Point, Point);
+    Triangle(Ray, Ray, Ray);
+    Triangle(Ray, Ray, Ray, Point, Point, Point);
     void draw();
+    void drawFlat();
     Point midpoint();
     void print();
 };
@@ -37,6 +42,7 @@ class Patch{
 	void uSubDivide(float);
 	void aSubDivide(float);
 	void draw();
+	void drawFlat();
 	Point midpoint();
 };
 
@@ -44,11 +50,11 @@ class Patch{
 class Model{
 	public:
 	vector<Patch> patches;
-    
 	Color color;
 	Model();
 	Model(vector<Patch>, Color);
 	void draw();
+	void drawFlat();
 	void uSubDivide(float);
 	void aSubDivide(float);
 };

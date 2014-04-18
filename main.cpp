@@ -100,7 +100,7 @@ void light (void) {
     GLfloat low_red[] = {0.3, 0.0, 0.0};
     GLfloat red[] = {1.0, 0.0, 0.0};
     GLfloat black[] = {0.0, 0.0, 0.0};
-    GLfloat light_position[] = {-7.0, 7.0, 7.0, 0.0};
+    GLfloat light_position[] = {-7.0, -7.0, 7.0, 0.0};
     
     glLightfv(GL_LIGHT0, GL_DIFFUSE, red);
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
@@ -375,7 +375,11 @@ void myDisplay() {
     } else {
         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
     	glEnable(GL_LIGHTING);
-        model.draw();
+        if (flat_shading){
+        	model.drawFlat();
+        }else{
+        	model.draw();
+        }
     }  
 
   glFlush();
@@ -447,7 +451,8 @@ void Mouse(int b,int s,int x,int y)
 // the usual stuff, nothing exciting here
 //****************************************************
 int main(int argc, char *argv[]) {
-      
+
+
   parseCommandlineArguments(argc, argv);
   
   string extension = input_file_name.substr(input_file_name.size() - 3);
