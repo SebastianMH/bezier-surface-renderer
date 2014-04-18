@@ -47,6 +47,8 @@ Triangle::Triangle(Point aa, Point bb, Point cc){
 void Triangle::draw(){
     glBegin(GL_TRIANGLES);
 	Point normal = ((a-b).cross(a-c)).normalize();
+    //Point mid = (auv + buv + cuv).normalize();
+    //Vector normal = interpolate(mid.x , mid.y).vector;
 	GLfloat gl_normal[] = {normal.x, normal.y, normal.z};
 	glNormal3fv(gl_normal);
 	glVertex3f(a.x, a.y, a.z);
@@ -209,6 +211,7 @@ void Patch::uSubDivide(float step){
             a = interpolate(u,v).point;
             b = interpolate(u,v+step).point;
             c = interpolate(u+step,v).point;
+            //normal = inter
 			triangles.push_back(Triangle(a,b,c));
 			
 			a = interpolate(u+step,v+step).point;
@@ -271,6 +274,13 @@ void Patch::aSubDivide(float step){
     
 
     for (int i = 0; i < triangles.size(); i++){
+        
+        /*for(int j = 0; j < triangles.size(); j++) {
+            triangles[j].print();
+        }
+        
+        printf("%d\n", i);*/
+        
 	    error_code = 0;
 	    
         a = triangles[i].a;
@@ -307,12 +317,11 @@ void Patch::aSubDivide(float step){
         if (error3 > step){
             error_code += 100;
         }
-        
-        switch (error_code) {
+                
+        switch (error_code) {                
             case 0:
                 break;
             case 1:
-                triangles[i].print();
                 triangle = triangles[i];
                 triangle.b = surface1;
                 triangle.buv = uv1;
@@ -321,9 +330,6 @@ void Patch::aSubDivide(float step){
                 triangle.a = surface1;
                 triangle.auv = uv1;
                 triangles[i] = triangle;
-                printf("%d\n", i);
-                triangles[i].print();
-                printf("\n\n");
                 i--;
                 break;
             case 10:
@@ -438,6 +444,7 @@ void Patch::aSubDivide(float step){
                 exit(-1);
 		}
 		
+		
 	}
 }
 
@@ -466,7 +473,8 @@ void Model::uSubDivide(float step){
 
 
 void Model::aSubDivide(float step){
-    for (int i = 0; i < patches.size(); i++){
+    for(int i = 0; i < patches.size(); i++){
         patches[i].aSubDivide(step);
+        printf("\n\n\n");
     }
 }

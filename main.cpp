@@ -143,7 +143,7 @@ vector<string> splitAtWhiteSpace(string const &input) {
 /*
 Parses input file and returns a model
 */
-Model parseInputFile() {
+Model parseBezFile() {
   ifstream input_file(input_file_name.c_str());
   string line;
   if(input_file.is_open()) {
@@ -179,6 +179,26 @@ Model parseInputFile() {
   exit(1);
 }
 
+
+void parseObjFile() {
+  ifstream input_file(input_file_name.c_str());
+  string line;
+  if(input_file.is_open()) {
+      vector<Point> points;
+      while (getline(input_file, line)) {
+          vector<string> llist;
+          llist = splitAtWhiteSpace(line);
+          if (llist[0].compare("v") == 0) {
+              Point p(atof(llist[1].c_str()), atof(llist[2].c_str()), atof(llist[3].c_str()));
+              points.push_back(p);
+          }
+          getline(input_file, line); //blank line between patches
+      }
+  } else {
+      printf("input file was not found\n");
+      exit(1);
+  }
+}
 
 //****************************************************
 // Keyboard functions
@@ -429,7 +449,14 @@ void Mouse(int b,int s,int x,int y)
 int main(int argc, char *argv[]) {
       
   parseCommandlineArguments(argc, argv);
-  model = parseInputFile();
+  
+  string extension = input_file_name.substr(input_file_name.size() - 3);
+  if(extension.compare("bez") == 0) {
+      model = parseBezFile();
+  } else {
+      parseObjFile();
+      exit(0);
+  }
   if (adaptive){
   	model.aSubDivide(sub_div_parameter);
   }else{
