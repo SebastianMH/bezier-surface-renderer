@@ -35,6 +35,7 @@ class Triangle{
 class Patch{
 	public:
 	Point points[4][4];
+    Patch();
 	Patch(Point[4][4]);
 	vector<Triangle> triangles;
 	Patch(PointMatrix);

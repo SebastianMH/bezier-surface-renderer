@@ -123,6 +123,7 @@ Point Triangle::midpoint(){
     return (a + b + c)*(1.0/3.0);
 }
 
+Patch::Patch(){ }
 
 Patch::Patch(Point p[4][4]){
 	for (int i=0;i<4;i++){

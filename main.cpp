@@ -50,13 +50,13 @@ using namespace std;
 
 //Change in location when keys are pressed
 float degree_step = 1;
-float translation_step = 0.1;
+float translation_step = 0.4;
 
 string input_file_name;
 float sub_div_parameter;
 // switch from uniform to adaptive mode 
 bool adaptive = false;
-bool flat_shading = false;
+bool flat_shading = true;
 bool wireframe = false;
 bool hiddenLineMode = false;
 Model model;
@@ -127,6 +127,7 @@ void parseCommandlineArguments(int argc, char *argv[]) {
   if(argc == 4 && strcmp(argv[3],"-a") ==0) {
     adaptive = true;
   }
+
 }
 
 
@@ -180,20 +181,46 @@ Model parseBezFile() {
 }
 
 
-void parseObjFile() {
+Model parseObjFile() {
   ifstream input_file(input_file_name.c_str());
   string line;
+  
+  vector<Patch> patches;
+  Patch p;
+  
   if(input_file.is_open()) {
       vector<Point> points;
       while (getline(input_file, line)) {
           vector<string> llist;
           llist = splitAtWhiteSpace(line);
-          if (llist[0].compare("v") == 0) {
+          if (llist.size() > 0 && llist[0].compare("v") == 0) { //point
               Point p(atof(llist[1].c_str()), atof(llist[2].c_str()), atof(llist[3].c_str()));
               points.push_back(p);
+          } else if(llist.size() > 0 && llist[0].compare("f") == 0) { //surface
+              int point_index1 = atoi(llist[1].c_str());
+              int point_index2 = atoi(llist[2].c_str());
+              int point_index3 = atoi(llist[3].c_str());
+              vector<Triangle> triangles;
+              
+              if(llist.size() == 5) {
+                  int point_index4 = atoi(llist[4].c_str());
+                  Triangle t1(points[point_index4-1], points[point_index1-1], points[point_index2-1]);
+                  Triangle t2(points[point_index4-1], points[point_index2-1], points[point_index3-1]);
+                  triangles.push_back(t1);
+                  triangles.push_back(t2);
+              } else if(llist.size() == 4) {
+                  Triangle t1(points[point_index1-1], points[point_index2-1], points[point_index3-1]);
+                  triangles.push_back(t1);
+              } else {
+                  printf("This model contains more than just triangle and quad representations!\n");
+              }
+              p.triangles = triangles;
+              patches.push_back(p);
           }
-          getline(input_file, line); //blank line between patches
       }
+      Model m;
+      m.patches = patches;
+      return m;
   } else {
       printf("input file was not found\n");
       exit(1);
@@ -457,18 +484,16 @@ int main(int argc, char *argv[]) {
   
   string extension = input_file_name.substr(input_file_name.size() - 3);
   if(extension.compare("bez") == 0) {
+      printf("HERE");
       model = parseBezFile();
+      if (adaptive){
+          model.aSubDivide(sub_div_parameter);
+      }else{
+          model.uSubDivide(sub_div_parameter);
+      }
   } else {
-      parseObjFile();
-      exit(0);
+      model = parseObjFile();
   }
-  if (adaptive){
-  	model.aSubDivide(sub_div_parameter);
-  }else{
-  	model.uSubDivide(sub_div_parameter);
-  }
-  
-  
   
   //This initializes glut
   glutInit(&argc, argv);
