@@ -6,9 +6,9 @@ Write a program that can convert Bézier patches to polygons and then display th
 
 REQUIRED:
 [X] Read in a list of patch data from a file.
-[ ] Tessellate/triangulate the patch using either a uniform or adaptive technique. (You have to implement both, your program will have a command-line flag to determine which is used.)
+[X] Tessellate/triangulate the patch using either a uniform or adaptive technique. (You have to implement both, your program will have a command-line flag to determine which is used.)
 [X] Open a window and use OpenGL to Render the object.
-[ ] When "s" is pressed the program will toggle between flat and smooth shading.
+[X] When "s" is pressed the program will toggle between flat and smooth shading.
 [X] When "w" is pressed the program will toggle between filled and wireframe mode.
 [X] When the arrow keys are pressed the object will be rotated.
 [X] When the shift+arrow keys are pressed the object will be translated.
@@ -17,14 +17,14 @@ out.
 [X] Your program will take two command line arguments with a third option parameter. These
 are: the input file name, the subdivision parameter, and a flag which determines if subdivision should be adaptive or uniform. An example command would look like:
 % myprogram3 inputfile.bez 0.1 -a 
-[ ] save output as an image
-[ ] use Maya to create an additional input file
+[X] use Maya to create an additional input file
 [ ] website
 
 
 OPTIONAL:
-[ ] When "h" is pressed the program will toggle between filled and hidden-line mode.
-[ ] The use of OBJ input/output
+[X] When "h" is pressed the program will toggle between filled and hidden-line mode.
+[X] The use of OBJ input
+[X] The use of OBJ output
 [ ] Add the ability to load multiple objects (for example a mix of .bez and .obj files) and display them each with different transformations. 
 [ ]  Refer to the example GLSL code posted on the website and implement a custom shader for your object display.
 [ ] video of use

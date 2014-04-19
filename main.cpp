@@ -50,13 +50,14 @@ using namespace std;
 
 //Change in location when keys are pressed
 float degree_step = 1;
-float translation_step = 0.1;
+float translation_step = 0.4;
 
 string input_file_name;
+string output_file_name = "";
 float sub_div_parameter;
 // switch from uniform to adaptive mode 
 bool adaptive = false;
-bool flat_shading = false;
+bool flat_shading = true;
 bool wireframe = false;
 bool hiddenLineMode = false;
 Model model;
@@ -75,6 +76,10 @@ int lasty=0;
 unsigned char Buttons[3] = {0};
 
 
+// light color
+float r = 1.0;
+float b = 0.0;
+float g = 0.0;
 
 
 
@@ -96,13 +101,10 @@ Viewport viewport;
 /******* lighting **********/
 void light (void) {
     
-    GLfloat white[] = {1.0, 1.0, 1.0}; 
-    GLfloat low_red[] = {0.3, 0.0, 0.0};
-    GLfloat red[] = {1.0, 0.0, 0.0};
-    GLfloat black[] = {0.0, 0.0, 0.0};
+    GLfloat color[] = {r, g, b};
     GLfloat light_position[] = {-7.0, -7.0, 7.0, 0.0};
     
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, red);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, color);
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 }
 /******* lighting **********/
@@ -123,11 +125,26 @@ void parseCommandlineArguments(int argc, char *argv[]) {
   }
   input_file_name = argv[1];
   sub_div_parameter = atof(argv[2]);
-  
-  if(argc == 4 && strcmp(argv[3],"-a") ==0) {
-    adaptive = true;
+  // The optional parameters
+  if(argc > 3) {
+    int i = 3;
+    while(i < argc) {      
+      if(strcmp(argv[i],"-a") == 0) {
+        adaptive = true;
+      } else if(strcmp(argv[i],"-o") == 0) {
+        output_file_name = argv[i+1];
+        i++;
+      } else if(strcmp(argv[i],"-color") == 0) {
+        r = atof(argv[i+1]);
+        g = atof(argv[i+2]);
+        b = atof(argv[i+3]);
+        i += 3;
+      }
+      i++;
+    }
   }
 }
+
 
 
 /*
@@ -143,7 +160,7 @@ vector<string> splitAtWhiteSpace(string const &input) {
 /*
 Parses input file and returns a model
 */
-Model parseInputFile() {
+Model parseBezFile() {
   ifstream input_file(input_file_name.c_str());
   string line;
   if(input_file.is_open()) {
@@ -179,6 +196,78 @@ Model parseInputFile() {
   exit(1);
 }
 
+
+Model parseObjFile() {
+  ifstream input_file(input_file_name.c_str());
+  string line;
+  
+  vector<Patch> patches;
+  Patch p;
+  
+  if(input_file.is_open()) {
+      vector<Point> points;
+      while (getline(input_file, line)) {
+          vector<string> llist;
+          llist = splitAtWhiteSpace(line);
+          if (llist.size() > 0 && llist[0].compare("v") == 0) { //point
+              Point p(atof(llist[1].c_str()), atof(llist[2].c_str()), atof(llist[3].c_str()));
+              points.push_back(p);
+          } else if(llist.size() > 0 && llist[0].compare("f") == 0) { //surface
+              int point_index1 = atoi(llist[1].c_str());
+              int point_index2 = atoi(llist[2].c_str());
+              int point_index3 = atoi(llist[3].c_str());
+              vector<Triangle> triangles;
+              
+              if(llist.size() == 5) {
+                  int point_index4 = atoi(llist[4].c_str());
+                  Triangle t1(points[point_index4-1], points[point_index1-1], points[point_index2-1]);
+                  Triangle t2(points[point_index4-1], points[point_index2-1], points[point_index3-1]);
+                  triangles.push_back(t1);
+                  triangles.push_back(t2);
+              } else if(llist.size() == 4) {
+                  Triangle t1(points[point_index1-1], points[point_index2-1], points[point_index3-1]);
+                  triangles.push_back(t1);
+              } else {
+                  printf("This model contains more than just triangle and quad representations!\n");
+              }
+              p.triangles = triangles;
+              patches.push_back(p);
+          }
+      }
+      Model m;
+      m.patches = patches;
+      return m;
+  } else {
+      printf("input file was not found\n");
+      exit(1);
+  }
+}
+
+
+void modelToOutputFile(Model model) {
+  Patch curr_patch;
+  Triangle curr_triangle;
+  int vertex_count = 1;
+  ofstream output_file;
+  output_file.open (output_file_name);
+  Point a,b,c;
+
+  for(int i = 0; i < model.patches.size(); i++) {
+    curr_patch = model.patches[i];
+    for(int j = 0; j < curr_patch.triangles.size(); j++) {
+      curr_triangle = curr_patch.triangles[j];
+      a = curr_triangle.a;
+      b = curr_triangle.b;
+      c = curr_triangle.c;
+      output_file << "v " << a.x << " " << a.y << " " << a.z << "\n";
+      output_file << "v " << b.x << " " << b.y << " " << b.z << "\n";
+      output_file << "v " << c.x << " " << c.y << " " << c.z << "\n";
+      output_file << "f " << vertex_count << " " << vertex_count+1 << " " << vertex_count+2 << "\n";
+      vertex_count += 3;
+    }
+  }
+  output_file.close();
+}
 
 //****************************************************
 // Keyboard functions
@@ -434,14 +523,23 @@ int main(int argc, char *argv[]) {
 
 
   parseCommandlineArguments(argc, argv);
-  model = parseInputFile();
-  if (adaptive){
-  	model.aSubDivide(sub_div_parameter);
-  }else{
-  	model.uSubDivide(sub_div_parameter);
+  
+  string extension = input_file_name.substr(input_file_name.size() - 3);
+  if(extension.compare("bez") == 0) {
+      model = parseBezFile();
+      if (adaptive){
+          model.aSubDivide(sub_div_parameter);
+      }else{
+          model.uSubDivide(sub_div_parameter);
+      }
+  } else {
+      model = parseObjFile();
   }
   
-  
+  if(output_file_name.compare("") != 0) {
+    modelToOutputFile(model);
+    exit(0);
+  }
   
   //This initializes glut
   glutInit(&argc, argv);

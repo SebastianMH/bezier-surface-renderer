@@ -8,7 +8,7 @@ Ray bezcurveinterp(Point curve[], float u){
 
 	Point A, B, C, D, E, p,temp;
 	Vector dPdu;
-	
+
 	// first, split each of the three segments
 	// to form two new ones AB and BC
 	A = curve[0] * (1.0-u);
@@ -17,18 +17,18 @@ Ray bezcurveinterp(Point curve[], float u){
 	B = curve[2] * u + B;
 	C = curve[2] * (1.0-u);
 	C = curve[3] * u + C;
-		
+
 	// now, split AB and BC to form a new segment DE
 	D = A * (1.0-u);
 	D = B * u + D;
 	E = B * (1.0-u);
 	E = C * u + E;
-	
+
 	// finally, pick the right point on DE,
 	// this is the point on the curve
 	p = D * (1.0-u);
 	p = E * u + p;
-	
+
 	// compute derivative also
 	dPdu = (E - D) * 3.0f;
 	return Ray(p, dPdu);
@@ -77,15 +77,15 @@ void Triangle::draw(){
 		GLfloat gl_normala[] = {na.x, na.y, na.z};
 		glNormal3fv(gl_normala);
 		glVertex3f(a.x, a.y, a.z);
-	
+
 		GLfloat gl_normalb[] = {nb.x, nb.y, nb.z};
 		glNormal3fv(gl_normalb);
 		glVertex3f(b.x, b.y, b.z);
-	
+
 		GLfloat gl_normalc[] = {nc.x, nc.y, nc.z};
 		glNormal3fv(gl_normalc);
 		glVertex3f(c.x, c.y, c.z);
-	
+
 		glEnd();
 }
 
@@ -123,6 +123,7 @@ Point Triangle::midpoint(){
     return (a + b + c)*(1.0/3.0);
 }
 
+Patch::Patch(){ }
 
 Patch::Patch(Point p[4][4]){
 	for (int i=0;i<4;i++){
@@ -217,13 +218,13 @@ void Patch::uSubDivide(float step){
             b = interpolate(u,v+step);
             c = interpolate(u+step,v);
 			triangles.push_back(Triangle(a,b,c,Point(u,v,0),Point(u,v+step,0),Point(u+step,v,0)));
-			
+
 			a = interpolate(u+step,v+step);
 			triangles.push_back(Triangle(c,b,a,Point(u+step,v,0),Point(u,v+step,0),Point(u+step,v+step,0)));
-						
+
 		}
 	}
-	
+
 	for (int i = 0; i < triangles.size(); i=i+1){
 		u = (triangles[i].auv.x + triangles[i].buv.x + triangles[i].cuv.x)/3.0;
 		v = (triangles[i].auv.y + triangles[i].buv.y + triangles[i].cuv.y)/3.0;
@@ -267,7 +268,7 @@ void Patch::aSubDivide(float step){
     
     for (int i = 0; i < triangles.size(); i++){
 	    error_code = 0;
-	    
+
         a = triangles[i].a;
         b = triangles[i].b;
 	    c = triangles[i].c;
@@ -286,13 +287,13 @@ void Patch::aSubDivide(float step){
         uv2 = (buv + cuv)*0.5;
 		surface2 = interpolate(uv2.x, uv2.y);
 		error2 = surface2.point.distance(edge2);
-		
+
 		//e3
         edge3 = (c + a)*0.5;
         uv3 = (cuv + auv)*0.5;
 		surface3 = interpolate(uv3.x, uv3.y);
 		error3 = surface3.point.distance(edge3);
-		
+
 		if (error1 > step){
             error_code += 1;
         }
@@ -458,13 +459,13 @@ void Patch::aSubDivide(float step){
             default:
                 exit(-1);
 		}
-		
+
 	}
 
 	for (int i = 0; i < triangles.size(); i++){
 		triangles[i].normal  = (triangles[i].na + triangles[i].nb + triangles[i].nc).normalize();
 	}
-	
+
 }
 
 
@@ -503,5 +504,3 @@ void Model::aSubDivide(float step){
         patches[i].aSubDivide(step);
     }
 }
-
-
