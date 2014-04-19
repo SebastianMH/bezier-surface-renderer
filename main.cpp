@@ -76,6 +76,10 @@ int lasty=0;
 unsigned char Buttons[3] = {0};
 
 
+// light color
+float r = 1.0;
+float b = 0.0;
+float g = 0.0;
 
 
 
@@ -97,13 +101,10 @@ Viewport viewport;
 /******* lighting **********/
 void light (void) {
     
-    GLfloat white[] = {1.0, 1.0, 1.0}; 
-    GLfloat low_red[] = {0.3, 0.0, 0.0};
-    GLfloat red[] = {1.0, 0.0, 0.0};
-    GLfloat black[] = {0.0, 0.0, 0.0};
+    GLfloat color[] = {r, g, b};
     GLfloat light_position[] = {-7.0, -7.0, 7.0, 0.0};
     
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, red);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, color);
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 }
 /******* lighting **********/
@@ -127,12 +128,17 @@ void parseCommandlineArguments(int argc, char *argv[]) {
   // The optional parameters
   if(argc > 3) {
     int i = 3;
-    while(i < argc) {
+    while(i < argc) {      
       if(strcmp(argv[i],"-a") == 0) {
         adaptive = true;
       } else if(strcmp(argv[i],"-o") == 0) {
         output_file_name = argv[i+1];
         i++;
+      } else if(strcmp(argv[i],"-color") == 0) {
+        r = atof(argv[i+1]);
+        g = atof(argv[i+2]);
+        b = atof(argv[i+3]);
+        i += 3;
       }
       i++;
     }

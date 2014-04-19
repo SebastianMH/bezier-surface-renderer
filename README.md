@@ -4,6 +4,7 @@ Platform: OS X
 Location of Source Code: cs184-??
 
 
+
 Features
 ========
 -- Reads in a list of patch data from a file.
@@ -55,8 +56,5 @@ http://nccastaff.bournemouth.ac.uk/jmacey/RobTheBloke/www/opengl_programming.htm
 
 Used to generate teddy bear:
 http://groups.csail.mit.edu/graphics/classes/6.837/F03/models/teddy.obj
-
-
-
 
 
