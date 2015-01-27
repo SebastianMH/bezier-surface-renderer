@@ -1,4 +1,5 @@
-TODO
+TODO CHECKLIST
+
 
 MAIN:
 Write a program that can convert Bézier patches to polygons and then display the result.
@@ -18,7 +19,7 @@ out.
 are: the input file name, the subdivision parameter, and a flag which determines if subdivision should be adaptive or uniform. An example command would look like:
 % myprogram3 inputfile.bez 0.1 -a 
 [X] use Maya to create an additional input file
-[ ] website
+[X] website
 
 
 OPTIONAL:
@@ -26,62 +27,6 @@ OPTIONAL:
 [X] The use of OBJ input
 [X] The use of OBJ output
 [ ] Add the ability to load multiple objects (for example a mix of .bez and .obj files) and display them each with different transformations. 
-[ ]  Refer to the example GLSL code posted on the website and implement a custom shader for your object display.
-[ ] video of use
+[ ] Refer to the example GLSL code posted on the website and implement a custom shader for your object display.
+[X] video of use
 [ ] When “c” is pressed the program will do vertex color shading based on the Gaussian Curvature of the surface.
-
-
-
-
-
-
-printf("=======================\n");
-points[0][0] = Point(0.0 , 0.0 , 0.0);
-points[0][1] = Point(0.0 , 0.33 , 1.0);
-points[0][2] = Point(0.0 , 0.66 , 1.0);
-points[0][3] = Point(0.0 , 1.0 , 0.0);
-
-points[1][0] = Point(0.33 , 0.0 , 0.0);
-points[1][1] = Point(0.33 , 0.33 , 1.0);
-points[1][2] = Point(0.33 , 0.66 , 1.0);
-points[1][3] = Point(0.33 , 1.0 , 0.0);
-
-points[2][0] = Point(0.66 , 0.0 , 0.0);
-points[2][1] = Point(0.66 , 0.33 , 1.0);
-points[2][2] = Point(0.66 , 0.66 , 1.0);
-points[2][3] = Point(0.66 , 1.0 , 0.0);
-
-points[3][0] = Point(1.0 , 0.0 , 0.0);
-points[3][1] = Point(1.0 , 0.33 , 1.0);
-points[3][2] = Point(1.0 , 0.66 , 1.0);
-points[3][3] = Point(1.0 , 1.0 , 0.0);
-
-
-
-printf(" 0,0: ");
-interpolate(0, 0).point.print();
- printf(" 0,1: ");
-interpolate(0, 1).point.print();
- printf(" 1,0: ");
-interpolate(1, 0).point.print();
- printf(" 1,1: ");
-interpolate(1, 1).point.print();
- printf("\n\n");
- printf(" 0,0.5: ");
- interpolate(0, 0.5).point.print();
-  printf(" 0.5,0: ");
- interpolate(0.5, 0).point.print();
-  printf(" 0.5,0.5: ");
- interpolate(0.5, 0.5).point.print();
-  printf(" 1,1: ");
- interpolate(0.25, 0.25).point.print();
-  printf("\n\n");
-printf("Points 0,0: "); 
-points[0][0].print();
-printf("Points 0,3: ");
-points[0][3].print();
-printf("Points 3,0: ");
-points[3][0].print();
-printf("Points 3,3: ");
-points[3][3].print();
-printf("\n\n");
