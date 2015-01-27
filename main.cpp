@@ -1,10 +1,4 @@
-// CS184 Simple OpenGL Example
-#include <cstdlib>  //for rand
-
-
-//#include "CImg.h"  //to get rgba data
-//using namespace cimg_library;
-
+#include <cstdlib>
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -40,9 +34,9 @@ static DWORD lastTime;
 #else
 static struct timeval lastTime;
 #endif
+
 using namespace std;
 #define PI 3.14159265
-//load structure of models->patchs->curves->vertex
 
 //****************************************************
 // Global Variables
@@ -62,10 +56,6 @@ bool wireframe = false;
 bool hiddenLineMode = false;
 Model model;
 
-
-
-
-
 float zoom = 15.0f;
 float rotx = 0;
 float roty = 0.001f;
@@ -75,14 +65,10 @@ int lastx=0;
 int lasty=0;
 unsigned char Buttons[3] = {0};
 
-
 // light color
 float r = 1.0;
 float b = 0.0;
 float g = 0.0;
-
-
-
 
 //****************************************************
 // Some Classes
@@ -94,10 +80,10 @@ class Viewport {
 };
 Viewport viewport;
 
-
 //****************************************************
 // Some Functions
 //****************************************************
+
 /******* lighting **********/
 void light (void) {
     
@@ -108,6 +94,7 @@ void light (void) {
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 }
 /******* lighting **********/
+
 
 /*
 Extracts commandline arguments, or returns an error if arguments are not valid.
@@ -144,7 +131,6 @@ void parseCommandlineArguments(int argc, char *argv[]) {
     }
   }
 }
-
 
 
 /*
@@ -323,6 +309,7 @@ void special_keyboard(int key, int x, int y){
 
 }
 
+
 void keyboard(unsigned char key, int x, int y){
   glMatrixMode(GL_MODELVIEW);
   switch(key){
@@ -493,8 +480,7 @@ void Motion(int x,int y)
 			glutPostRedisplay();
 }
 
-//-------------------------------------------------------------------------------
-//
+
 void Mouse(int b,int s,int x,int y)
 {
 	lastx=x;
@@ -516,11 +502,12 @@ void Mouse(int b,int s,int x,int y)
 	glutPostRedisplay();
 }
 
-//****************************************************
-// the usual stuff, nothing exciting here
-//****************************************************
-int main(int argc, char *argv[]) {
 
+//****************************************************
+// main
+//****************************************************
+
+int main(int argc, char *argv[]) {
 
   parseCommandlineArguments(argc, argv);
   
@@ -560,23 +547,13 @@ int main(int argc, char *argv[]) {
   glutDisplayFunc(myDisplay);                  // function to run when its time to draw something
   glutReshapeFunc(myReshape);                  // function to run when the window gets resized
   
-  
   glutKeyboardFunc(keyboard);
   glutSpecialFunc(special_keyboard);
   glutMouseFunc(Mouse);
   glutMotionFunc(Motion);
-
 
   glutIdleFunc(myFrameMove);                   // function to run when not handling any other task
   glutMainLoop();                              // infinite loop that will keep drawing and resizing and whatever else
 
   return 0;
 }
-
-
-
-
-
-
-
-
