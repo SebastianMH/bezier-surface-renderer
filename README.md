@@ -50,7 +50,7 @@ $ ./main models/teapot.bez 0.01 -a -o teapot.obj
 Additional Work (see website)
 =============================
 * Created a custom input file (my_art.bez)  
-* (EXTRA CREDIT) Created a video demonstrating features  
+* (EXTRA CREDIT) Created a [video](https://www.youtube.com/watch?v=xeRLmaDDV7w) demonstrating features  
 
 
 Resources
