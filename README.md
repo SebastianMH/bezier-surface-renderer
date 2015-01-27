@@ -13,8 +13,8 @@ Features
 * Opens a window and uses OpenGL to Render the object.  
 
 
-Transformations  
-===============  
+Controls 
+========  
 * When "s" is pressed the program will toggle between flat and smooth shading.  
 * When "w" is pressed the program will toggle between filled and wireframe mode.  
 * When the arrow keys are pressed the object will be rotated.  
