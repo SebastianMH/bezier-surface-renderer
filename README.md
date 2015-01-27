@@ -1,7 +1,11 @@
-Sebastian Miller-Hack  
-Risa Pesavento  
-Platform: OS X  
-Location of Source Code: cs184-dl  
+Bézier Surface Renderer
+=======================
+A [bézier surface](http://en.wikipedia.org/wiki/B%C3%A9zier_surface) is a mathmatical representation of a surface. 
+This program [tessellates](http://en.wikipedia.org/wiki/Tessellation_(computer_graphics)) polygons to approximate bézier surfaces and renders the result.
+Both uniform  and adaptive tessellation are implemented.
+This code was written by Sebastian Miller-Hack and Risa Pesavento for a class project at UC Berkeley.
+The project specification can be found on the class website [here] (http://www-inst.eecs.berkeley.edu/~cs184/sp14/assignments/ass3/assignment-03.pdf).
+
 
 Features
 ========
